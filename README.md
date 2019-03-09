@@ -19,3 +19,4 @@ Levels are mapped between Logrus levels and Stackdriver severity:
 	{logrus.PanicLevel, logging.Emergency},
 
 
+Not an official Google product.

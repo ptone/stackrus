@@ -1,3 +1,17 @@
+// Copyright 2019 Google LLC
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     https://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package stackrus
 
 import (
@@ -9,14 +23,16 @@ import (
 	"google.golang.org/api/option"
 )
 
-type StackdriverHook struct {
+// Hook provides a Logrus logging hook that sends logs to Stackdriver Logging
+type Hook struct {
 	client *logging.Client
 	logger *logging.Logger
 	levels []logrus.Level
 }
 
-func NewStackdriverHook(ctx context.Context, projectID, logName string, level logrus.Level, opts ...option.ClientOption) *StackdriverHook {
-	hook := &StackdriverHook{}
+// NewHook create a new Hook with project and logname configuration
+func NewHook(ctx context.Context, projectID, logName string, level logrus.Level, opts ...option.ClientOption) *Hook {
+	hook := &Hook{}
 
 	c, err := logging.NewClient(ctx, projectID)
 	if err != nil {
@@ -41,28 +57,32 @@ func NewStackdriverHook(ctx context.Context, projectID, logName string, level lo
 	}
 	hook.levels = logLevels
 	hook.client.OnError = func(e error) {
-		fmt.Println("Stackrus hook ERR: ", e.Error())
+		fmt.Println("Stackrus hook ERR: ", e)
 	}
 
 	return hook
 }
 
-func (l *StackdriverHook) Fire(e *logrus.Entry) error {
+// Fire logs entry to Stackdriver
+func (l *Hook) Fire(e *logrus.Entry) error {
 	le := logrusToStackdriverEntry(e)
 	l.logger.Log(le)
 	return nil
 }
 
-func (l *StackdriverHook) Flush() {
+// Flush clears any pending logs to the network
+func (l *Hook) Flush() {
 	l.logger.Flush()
 }
 
-func (l *StackdriverHook) Close() {
+// Close flushes any log entries before closing the hook
+func (l *Hook) Close() {
 	l.logger.Flush()
 	l.client.Close()
 }
 
-func (l *StackdriverHook) Levels() []logrus.Level {
+// Levels returns the available logging levels
+func (l *Hook) Levels() []logrus.Level {
 	return l.levels
 }
 

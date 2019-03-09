@@ -8,18 +8,14 @@ import (
 )
 
 var log = logrus.New()
-var hook *stackrus.StackdriverHook
-
-func init() {
-	// log.Formatter = new(logrus.JSONFormatter)
-	log.Formatter = new(logrus.TextFormatter) // default
-	log.Level = logrus.DebugLevel
-	ctx := context.Background()
-	hook = stackrus.NewStackdriverHook(ctx, "stackrus-test-project", "logrus-test-log", logrus.InfoLevel)
-	log.Hooks.Add(hook)
-}
+var hook *stackrus.Hook
 
 func main() {
+	ctx := context.Background()
+	hook = stackrus.NewHook(ctx, "stackrus-test-project", "logrus-test-log", logrus.InfoLevel)
+	log.Hooks.Add(hook)
+	log.Formatter = new(logrus.TextFormatter)
+	log.Level = logrus.DebugLevel
 	defer hook.Close()
 	defer func() {
 		err := recover()
