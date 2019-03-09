@@ -34,7 +34,7 @@ type Hook struct {
 func NewHook(ctx context.Context, projectID, logName string, level logrus.Level, opts ...option.ClientOption) *Hook {
 	hook := &Hook{}
 
-	c, err := logging.NewClient(ctx, projectID)
+	c, err := logging.NewClient(ctx, projectID, opts...)
 	if err != nil {
 		panic("unable to create logging client")
 	}
