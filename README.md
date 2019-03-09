@@ -18,5 +18,6 @@ Levels are mapped between Logrus levels and Stackdriver severity:
 	{logrus.FatalLevel, logging.Critical},
 	{logrus.PanicLevel, logging.Emergency},
 
+This hook specifically uses "[cloud.google.com/go/logging](https://godoc.org/cloud.google.com/go/logging)" while many other related projects are only using the deprecated "[google.golang.org/api/logging/v2](https://godoc.org/google.golang.org/api/logging/v2)".
 
 Not an official Google product.
