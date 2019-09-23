@@ -18,6 +18,10 @@ Levels are mapped between Logrus levels and Stackdriver severity:
 	{logrus.FatalLevel, logging.Critical},
 	{logrus.PanicLevel, logging.Emergency},
 
+You can set the logs as being related to a cloud resource by setting special logrus fields of `resource.type` and `resource.labels.*`
+
+The resource type must match a valid stackdriver monitored resource.  eg: `cloud_run_revision`.
+
 This hook specifically uses "[cloud.google.com/go/logging](https://godoc.org/cloud.google.com/go/logging)" while many other related projects are only using the deprecated "[google.golang.org/api/logging/v2](https://godoc.org/google.golang.org/api/logging/v2)".
 
 Not an official Google product.

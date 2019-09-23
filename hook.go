@@ -17,10 +17,13 @@ package stackrus
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"cloud.google.com/go/logging"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
+
+	mrpb "google.golang.org/genproto/googleapis/api/monitoredres"
 )
 
 // Hook provides a Logrus logging hook that sends logs to Stackdriver Logging
@@ -36,6 +39,7 @@ func NewHook(ctx context.Context, projectID, logName string, level logrus.Level,
 
 	c, err := logging.NewClient(ctx, projectID, opts...)
 	if err != nil {
+		fmt.Println(err)
 		panic("unable to create logging client")
 	}
 	hook.client = c
@@ -91,8 +95,26 @@ func logrusToStackdriverEntry(ge *logrus.Entry) logging.Entry {
 	le.Timestamp = ge.Time
 	le.Payload = ge.Message
 	labels := make(map[string]string, 0)
+	emptyResource := &mrpb.MonitoredResource{
+		Type:   "",
+		Labels: map[string]string{},
+	}
 	for k, v := range ge.Data {
-		labels[k] = fmt.Sprintf("%v", v)
+		if strings.HasPrefix(k, "resource.") {
+			if le.Resource == nil {
+				le.Resource = emptyResource
+			}
+			if k == "resource.type" {
+				le.Resource.Type = fmt.Sprintf("%v", v)
+				continue
+			}
+			if strings.HasPrefix(k, "resource.labels") {
+				lk := strings.TrimPrefix(k, "resource.labels.")
+				le.Resource.Labels[lk] = fmt.Sprintf("%v", v)
+			}
+		} else {
+			labels[k] = fmt.Sprintf("%v", v)
+		}
 	}
 	le.Labels = labels
 	// TODO severity
