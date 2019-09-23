@@ -80,9 +80,9 @@ func (l *Hook) Flush() {
 }
 
 // Close flushes any log entries before closing the hook
-func (l *Hook) Close() {
+func (l *Hook) Close() error {
 	l.logger.Flush()
-	l.client.Close()
+	return l.client.Close()
 }
 
 // Levels returns the available logging levels
