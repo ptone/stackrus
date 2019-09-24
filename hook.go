@@ -80,7 +80,7 @@ func (l *Hook) Flush() {
 }
 
 // Close flushes any log entries before closing the hook
-func (l *Hook) Close() error {
+func (l Hook) Close() error {
 	l.logger.Flush()
 	return l.client.Close()
 }
