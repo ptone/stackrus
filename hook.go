@@ -112,6 +112,8 @@ func logrusToStackdriverEntry(ge *logrus.Entry) logging.Entry {
 				lk := strings.TrimPrefix(k, "resource.labels.")
 				le.Resource.Labels[lk] = fmt.Sprintf("%v", v)
 			}
+		} else if k == "trace" {
+			le.Trace = fmt.Sprintf("%v", v)
 		} else {
 			labels[k] = fmt.Sprintf("%v", v)
 		}

@@ -25,7 +25,7 @@ var hook *stackrus.Hook
 
 func main() {
 	ctx := context.Background()
-	hook = stackrus.NewHook(ctx, "stackrus-test-project", "logrus-test-log", logrus.InfoLevel)
+	hook = stackrus.NewHook(ctx, "stackrus-test-project", "logrus-test-log", logrus.DebugLevel)
 	log.Hooks.Add(hook)
 	log.Formatter = new(logrus.TextFormatter)
 	log.Level = logrus.DebugLevel
@@ -56,7 +56,7 @@ func main() {
 		"number": 122,
 	}).Warn("The group's number increased tremendously!")
 
-	// you won't see this on in the logs - as the level is set to Info or higher
+	// you won't see this on in the logs - if the level is set to Info or higher
 	log.WithFields(logrus.Fields{
 		"temperature": -4,
 	}).Debug("Temperature changes")
